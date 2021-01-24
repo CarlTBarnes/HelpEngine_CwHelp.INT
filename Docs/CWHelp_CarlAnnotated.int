@@ -1,0 +1,108 @@
+!CWHelp.INT - Comments inserted by Carl Barnes
+
+                            !Clarion Sends When                   !HtmlHelp #define differs 
+HCMD_CLOSE       EQUATE(0)  ! Program closing                      <> 12 HH_CLOSE_ALL
+HCMD_SHOWTOPIC   EQUATE(1)  ! STD(STD:Help) or F1 or HELP(,'xx')   <> 0  HH_DISPLAY_TOPIC 
+HCMD_SHOWINDEX   EQUATE(2)  ! STD(STD:HelpIndex)                   == 2  HH_DISPLAY_INDEX
+HCMD_SHOWTOC     EQUATE(3)  ! RTL needs a STD:HelpTOC              <> 1  HH_DISPLAY_TOC
+HCMD_SHOWSEARCH  EQUATE(4)  ! STD(STD:HelpSearch)                  <> 3  HH_DISPLAY_SEARCH 
+HCMD_HELPONHELP  EQUATE(5)  ! STD(STD:HelpOnHelp)                        Not Available
+
+HelpEngine       INTERFACE 
+! Called by HELP(FileName.XXX) and passed XXX (no leading period).
+!    If returns True then this HelpEngine.HelpCmd is called for HLP(HelpID) HELP(,HelpID)
+! Parameter:
+! - extension of the help file's name without period e.g. CHM. Return TRUE if this engine handles the File Extension
+Match              PROCEDURE(CONST *CSTRING _HlpFileExt),BOOL
+! Parameters:
+! - window handle returned by PROP:Handle for a WINDOW or a control
+! - name of help file - Note is is <omittable> but in my tests it was always sent even with HCMD_CLOSE
+! - help command (HCMD_xxx or extended command code)
+! - additional parameter dependent from the command
+!Original HelpCmd   PROCEDURE(UNSIGNED, <CONST *CSTRING>, UNSIGNED, LONG=0),BOOL,PROC
+HelpCmd    PROCEDURE(UNSIGNED _HWnd, <CONST *CSTRING _HlpFile>, UNSIGNED _HCmd, LONG _Data=0),BOOL,PROC
+                 END
+
+!Note Property.CLW--> PROP:HelpEngine         EQUATE (7D40H) ! array[integer]
+!     Used with SYSTEM and Indexed (Max 16) allowing multiple engines to be queried for an Engine.Match
+!     This is an Indexed Property so you can create multiple hooks: SYSTEM{PROP:HelpEngine,3} = ADDRESS(MyHelp.HelpEngine) 
+!       You can define up to 16 and they are called in Index order. 
+!       If you use all 16 then the RTL CHM Engine is not called, so only use up to 15.
+!       You can Loop to find a Free Engine Index by testing for zero: IF SYSTEM{PROP:HelpEngine,Index}=0
+
+!To understand how Help Calling works read about HtmlHelp() on MSDN. 
+!
+!The HelpEngine.HelpCmd() gets called instead of HtmlHelp() with the same parameters except the uCommand values are different in value.
+!E.g. the 4th parmater "LONG _Data=0" with be the address of a CSTRING when HCMD_SHOWTOPIC
+
+!From Windows SDK HtmlHelp.h
+!   HWND WINAPI HtmlHelpA(HWND hwndCaller, LPCSTR pszFile, UINT uCommand, DWORD_PTR dwData)
+!    #define HH_DISPLAY_TOPIC        0x0000       !Clarion HCMD_SHOWTOPIC   EQUATE(1)
+!    #define HH_DISPLAY_TOC          0x0001       !Clarion HCMD_SHOWTOC     EQUATE(3)
+!    #define HH_DISPLAY_INDEX        0x0002       !Clarion HCMD_SHOWINDEX   EQUATE(2)
+!    #define HH_DISPLAY_SEARCH       0x0003       !Clarion HCMD_SHOWSEARCH  EQUATE(4)
+!    #define HH_CLOSE_ALL            0x0012       !Clarion HCMD_CLOSE       EQUATE(0) 
+!
+!HtmlHelp does not have HCMD_HELPONHELP (WinHelp did).
+!==============================================================================================
+!#1 Call Help
+!To use the HelpEngine INTERFACE to CALL help use the below code. The main advantage is you can open Help from a Different file and not change the HELP()
+!You must loop thru the 16 engines and find the one that MATCH('MyExtension') 
+    
+        OMIT('** END #1**')
+        INCLUDE('CWHelp.INT'),ONCE
+CallHlp     &HelpEngine
+HlpFile     CSTRING('MyHelp.CHM')
+HlpEXT      CSTRING('CHM')
+HlpTopic    CSTRING('Index.htm')    !Must be "C" String
+Index       LONG,AUTO 
+   CODE
+   HELP(HlpFile)   !You MUST set the Help file someplace so gives you Engine to take your EXT 
+   LOOP Index=1 TO 16                                  !Look thru 16 engines
+        IF SYSTEM{PROP:HelpEngine,Index} > 0 THEN      !Index assigned Engine? 
+           CallHlp &= SYSTEM{PROP:HelpEngine,Index} 
+           IF CallHlp.Match(HelpEXT) THEN            !Call HelpEngine.Match() 
+              CallHlp.HelpCmd(0,HlpFile,HCMD_SHOWTOPIC,ADDRESS(HlpTopic))    !Open Help to Topic
+              CallHlp.HelpCmd(0,HlpFile,HCMD_SHOWINDEX,0)                    !Open Help to Index tab
+              BREAK
+           END
+        END
+   END
+    !end of OMIT('** END #1**')
+    
+
+!==============================================================================================
+!#2 Hook HelpEngine INTERFACE and get called back 
+!
+!   HelpEngine is an Interface so you Implement() it with a Class 
+!
+  
+    OMIT('** END #2 **')
+MyHlpHookCls CLASS,TYPE,IMPLEMENTS(HelpEngine)
+!Called by HelpEngine Interface to do the Real Work so can inherit, and are virtual
+Match           PROCEDURE(CONST *CSTRING _HelpFileEXT),BOOL,VIRTUAL,PROTECTED  !Do we match .ChekFileEXT ?
+HelpCmd         PROCEDURE(UNSIGNED _HWnd, <CONST *CSTRING _HelpFile>, UNSIGNED _HCmd, LONG _Data=0),BOOL,PROC,VIRTUAL,PROTECTED
+             END   
+!Interface simply calls class
+MyHlpHookCls.HelpEngine.Match    PROCEDURE(CONST *CSTRING _HelpFileEXT)!,BOOL
+    CODE
+    RETURN SELF.MATCH(_HelpFileEXT) 
+MyHlpHookCls.HelpEngine.HelpCmd  PROCEDURE(UNSIGNED _HWnd, <CONST *CSTRING _HelpFile>, UNSIGNED _HCmd, LONG _Data=0)!,BOOL,PROC
+    CODE
+    RETURN SELF.HelpCmd(_HWnd,_HelpFile,_HCmd,_Data)
+MyHlpHookCls.Match PROCEDURE(CONST *CSTRING _HelpFileEXT)!,BOOL,VIRTUAL,PROTECTED
+    CODE
+    IF UPPER(_HelpFileEXT)=SELF.ChekFileEXT THEN 
+       RETURN True 
+    END     
+    RETURN False
+MyHlpHookCls.HelpCmd PROCEDURE(UNSIGNED _HWnd, <CONST *CSTRING _HelpFile>, UNSIGNED _HCmd, LONG _Data=0)!,BOOL,PROC,VIRTUAL,,PROTECTED
+    CODE
+    Message('_HCmd=' & _HCmd &'|'& _HelpFile)
+    !TODO more complicated
+    RETURN True
+    !end of OMIT('** END #2 **')
+    
+    
+
+!==============================================================================================

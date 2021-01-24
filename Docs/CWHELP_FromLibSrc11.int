@@ -1,0 +1,18 @@
+HCMD_CLOSE       EQUATE(0)
+HCMD_SHOWTOPIC   EQUATE(1)
+HCMD_SHOWINDEX   EQUATE(2)
+HCMD_SHOWTOC     EQUATE(3)
+HCMD_SHOWSEARCH  EQUATE(4)
+HCMD_HELPONHELP  EQUATE(5)
+
+HelpEngine       INTERFACE
+! Parameter:
+! - extension of the help file's name
+Match              PROCEDURE(CONST *CSTRING),BOOL
+! Parameters:
+! - window handle returned by PROP:Handle for a WINDOW or a control
+! - name of help file
+! - help command (HCMD_xxx or extended command code)
+! - additional parameter dependent from the command
+HelpCmd            PROCEDURE(UNSIGNED, <CONST *CSTRING>, UNSIGNED, LONG=0),BOOL,PROC
+                 END

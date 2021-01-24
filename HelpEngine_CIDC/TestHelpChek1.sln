@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# Clarion 2.1.0.2447
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "TestHelpChek1", "TestHelpChek1.cwproj", "{CA81EF92-43FD-4A75-8BA7-ECD45DFF077E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA81EF92-43FD-4A75-8BA7-ECD45DFF077E}.Debug|Win32.Build.0 = Debug|Win32
+		{CA81EF92-43FD-4A75-8BA7-ECD45DFF077E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CA81EF92-43FD-4A75-8BA7-ECD45DFF077E}.Release|Win32.Build.0 = Release|Win32
+		{CA81EF92-43FD-4A75-8BA7-ECD45DFF077E}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+EndGlobal
