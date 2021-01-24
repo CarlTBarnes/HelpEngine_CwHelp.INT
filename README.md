@@ -47,11 +47,13 @@ Tips: Only the old WinHelp HLP engine is loaded initially so it should be index 
 
 ## Dries Driessen ClarionLive Presentation using HelpEngine
 
-Clarion Live 441 by Dries Driessen was titled "On Google Analytics In Clarion".
+Clarion Live 441 by Dries Driessen titled "On Google Analytics In Clarion".
 
 > Dries is back! Here's what he's up to!! Dries says: Friday's presentation is about Google Analytics for Desktop applications, Web applications and Help. I'll be demonstrating how to add it to your desktop applications, your Nettalk webserver applications and even how to use Nina to get metrics on your help! And of course I will also cover the ins and outs of the Google Analytics site.
 
-Dries uses the HelpEngine to hook help calls and log them, then he opens the help topic as normal for the user to read. This way he can see counts of what help topics are being read the most, possibly those windows need attention. In the Dries_ClarionLive_441 folder of this Repo I included class Dries created and used in his presentation. This includes other class so you probably cannot use the class, but you can see how he hooked help.
+Dries uses the HelpEngine to hook help calls and log them, then he opens the help topic as normal for the user to read. This way he can see counts of what help topics are being read the most, possibly those windows need attention. His presentation covers a lot on Google Analytics. The HelpEngine appears at time 1:46:30. The slide's title is "Adding Ninja to your help" with the first bullet point as "Carl Barnes' fantastic presentation at CIDC demonstrated how to hook into Clarion's help engine."
+
+In the Dries_ClarionLive_441 folder of this Repo I included the class Dries created and used in his presentation. This includes other classes so you probably cannot use the class as is, but you can see how he hooked help. In his code you will find a comment "!overwrite it with our address". I would not do that. I would search the 16 help engines indexes to find a Zero and use that one. You can see this in the CIDC examples function HlpEngTlz.FindFreeIndex().
 
 ## Carl Barnes Window Preview Class
 
