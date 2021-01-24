@@ -4,7 +4,9 @@ The CIDC download included these examples of using the Help Engine.
 
 ## CbHelpEngMsgBox Class - Show Message of HelpCmd
 
-This simply shows a Message() with the Parameters passed to the HelpCmd method. It only does this for file extensions .MSGBOX so Help('xxxxMsgBox')
+This simply shows a Message() with the Parameters passed to the HelpCmd method. It only does this for file extensions .MSGBOX so set Help('Xxxx.MsgBox'). Note that the RTL does not require the 'Xxxx.MsgBox' file to exist on the disk.
+
+This could be used as an example to implement any other kind of help, e.g. a WWW HelpEngine that would ShellExecute to open a web page based on the passed HLP('help string') to HelpEngine.HelpCmd in the 4th parameter as a LONG address of a CSTRING. 
 
 ## CbHelpEngChek Class - Check Help IDs on a Window
 
