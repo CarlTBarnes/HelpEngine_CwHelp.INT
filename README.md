@@ -53,7 +53,7 @@ Clarion Live 441 by Dries Driessen titled "On Google Analytics In Clarion".
 
 Dries uses the HelpEngine to hook help calls and log them, then he opens the help topic as normal for the user to read. This way he can see counts of what help topics are being read the most, possibly those windows need attention. His presentation covers a lot on Google Analytics. The HelpEngine appears at time 1:46:30. The slide's title is "Adding Ninja to your help" with the first bullet point as "Carl Barnes' fantastic presentation at CIDC demonstrated how to hook into Clarion's help engine."
 
-In the Dries_ClarionLive_441 folder of this Repo I included the class Dries created and used in his presentation. This includes other classes so you probably cannot use the class as is, but you can see how he hooked help. In his code you will find a comment "!overwrite it with our address". I would not do that. I would search the 16 help engines indexes to find a Zero and use that one. You can see this in the CIDC examples function HlpEngTlz.FindFreeIndex().
+In the Dries_ClarionLive_441 folder of this Repo I included the class Dries created and used in his presentation. This includes other classes so you probably cannot use the class as is, but you can see how he hooked help. In his code you will find a comment "!overwrite it with our address". This is different than the way I have done it. He saves a pointer to the RTL HelpEngine for CHM (IOriginalHelpEngine) then changes that to point to his Engine. So Help for CHM files call his Engine, he logs the call then calls the RTL Engine using the interface pointer he saved. His code is well commented so please give it a read. You can also watch the video.
 
 ## Carl Barnes Window Preview Class
 
