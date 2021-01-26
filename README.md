@@ -1,6 +1,6 @@
 # HelpEngine the Clarion way to Hook Help
 
-This is a work in progress providing my CIDC 2017 Help Presentation materials. I will expand on how to use it in the future. Please post questions on the Clarion Hub thread.
+This is a work in progress providing my CIDC 2017 Help Presentation materials. I will expand on how to use it in the future. Please post questions on the [Clarion Hub thread Hook Clarion Help with the HelpEngine](https://clarionhub.com/t/hook-clarion-help-with-the-helpengine-cwhelp-int-not-prop-helphook/3786)  .
 
 Clarion 8 implemented native support for the CHM format of help in the RTL. You can simply specify your file as HELP('Myhelp.CHM') and HLP('~MyTopic.htm') with your context string. Previously CHM was implemented using the CwHH templates and a DLL. Help opening was hooked using an ALIAS(F1Key,CtrlH) and code was inserted into every procedure by the template. This was undesirable.
 
